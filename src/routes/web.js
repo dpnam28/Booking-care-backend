@@ -18,6 +18,9 @@ import {
   handleDeleteUser,
   getAllCode,
 } from "../controllers/userController";
+
+import { doctorController } from "../controllers/doctorController";
+
 let router = express.Router();
 
 let initWebRounters = (app) => {
@@ -36,6 +39,8 @@ let initWebRounters = (app) => {
   router.put("/api/update", handleEditUser);
   router.delete("/api/delete", handleDeleteUser);
   router.get("/allcode", getAllCode);
+
+  router.get("/api/get-doctor", doctorController);
 
   return app.use("/", router);
 };
