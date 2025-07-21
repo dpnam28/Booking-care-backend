@@ -1,7 +1,7 @@
-import { raw } from "body-parser";
+import { where } from "sequelize";
 import db from "../models/index";
 
-let getDoctor = (limit) => {
+let getDoctorLimitS = (limit) => {
   return new Promise(async (resolve, reject) => {
     try {
       let data = await db.User.findAll({
@@ -32,6 +32,42 @@ let getDoctor = (limit) => {
   });
 };
 
+let getAllDoctorS = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await db.User.findAll({
+        where: { roleId: "R2" },
+        attributes: { exclude: ["password", "image"] },
+      });
+      resolve(data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+let createInfoDoctorS = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (data && data.html && data.markdown) {
+        await db.Markdown.create({
+          doctorId: data.doctorId,
+          contentHTML: data.html,
+          contentMarkdown: data.markdown,
+          description: data.description,
+          specialityId: data.specialityId,
+          clinicId: data.clinicId,
+        });
+      }
+      resolve(data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
-  getDoctor,
+  getDoctorLimitS,
+  getAllDoctorS,
+  createInfoDoctorS,
 };

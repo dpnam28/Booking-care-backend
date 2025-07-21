@@ -19,7 +19,11 @@ import {
   getAllCode,
 } from "../controllers/userController";
 
-import { doctorController } from "../controllers/doctorController";
+import {
+  getDoctorLimit,
+  getAllDoctor,
+  createInfoDoctor,
+} from "../controllers/doctorController";
 
 let router = express.Router();
 
@@ -40,7 +44,10 @@ let initWebRounters = (app) => {
   router.delete("/api/delete", handleDeleteUser);
   router.get("/allcode", getAllCode);
 
-  router.get("/api/get-doctor", doctorController);
+  router.get("/api/get-doctor-limit", getDoctorLimit);
+  router.get("/api/get-doctor-all", getAllDoctor);
+
+  router.post("/api/create-info-doctor", createInfoDoctor);
 
   return app.use("/", router);
 };
