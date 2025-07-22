@@ -1,12 +1,13 @@
 import {
-  getDoctorLimitS,
-  getAllDoctorS,
-  createInfoDoctorS,
+  getDoctorLimitService,
+  getAllDoctorService,
+  createInfoDoctorService,
+  getDoctorsDetailService,
 } from "../services/doctorServices";
 
 let getDoctorLimit = async (req, res) => {
   try {
-    let data = await getDoctorLimitS(+req.query.limit);
+    let data = await getDoctorLimitService(+req.query.limit);
     return res.status(200).json({ errCode: 0, data });
   } catch (error) {
     return res.status(200).json({ errCode: 1, message: "uncatch value" });
@@ -15,7 +16,7 @@ let getDoctorLimit = async (req, res) => {
 
 let getAllDoctor = async (req, res) => {
   try {
-    let data = await getAllDoctorS();
+    let data = await getAllDoctorService();
     return res.status(200).json({ errCode: 0, data });
   } catch (error) {
     return res.status(200).json({ errCode: 1, message: "uncatch value" });
@@ -23,8 +24,22 @@ let getAllDoctor = async (req, res) => {
 };
 let createInfoDoctor = async (req, res) => {
   try {
-    let data = await createInfoDoctorS(req.body);
+    let data = await createInfoDoctorService(req.body);
     return res.status(200).json({ errCode: 0, message: "Create successfully" });
+  } catch (error) {
+    return res.status(200).json({ errCode: 1, message: "error" });
+  }
+};
+
+let getDoctorsDetail = async (req, res) => {
+  try {
+    if (!req.query.id)
+      return res.status(200).json({ errCode: 1, message: "Missing query" });
+    let data = await getDoctorsDetailService(req.query.id);
+    return res.status(200).json({
+      errCode: 0,
+      ...data,
+    });
   } catch (error) {
     return res.status(200).json({ errCode: 1, message: "error" });
   }
@@ -34,4 +49,5 @@ module.exports = {
   getDoctorLimit,
   getAllDoctor,
   createInfoDoctor,
+  getDoctorsDetail,
 };

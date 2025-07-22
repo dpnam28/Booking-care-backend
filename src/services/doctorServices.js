@@ -1,7 +1,7 @@
 import { where } from "sequelize";
 import db from "../models/index";
 
-let getDoctorLimitS = (limit) => {
+let getDoctorLimitService = (limit) => {
   return new Promise(async (resolve, reject) => {
     try {
       let data = await db.User.findAll({
@@ -32,7 +32,7 @@ let getDoctorLimitS = (limit) => {
   });
 };
 
-let getAllDoctorS = () => {
+let getAllDoctorService = () => {
   return new Promise(async (resolve, reject) => {
     try {
       let data = await db.User.findAll({
@@ -46,7 +46,7 @@ let getAllDoctorS = () => {
   });
 };
 
-let createInfoDoctorS = (data) => {
+let createInfoDoctorService = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (data && data.html && data.markdown) {
@@ -66,8 +66,44 @@ let createInfoDoctorS = (data) => {
   });
 };
 
+let getDoctorsDetailService = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id) {
+        let data = await db.User.findOne({
+          where: {
+            id: id,
+          },
+          attributes: { exclude: ["password"] },
+          include: [
+            {
+              model: db.Markdown,
+              attributes: ["description", "contentHTML", "contentMarkdown"],
+            },
+            {
+              model: db.Allcode,
+              as: "positionData",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: true,
+          nest: true,
+        });
+
+        if (data.image) {
+          data.image = new Buffer(data.image, "base64").toString("binary");
+        }
+        resolve(data);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
-  getDoctorLimitS,
-  getAllDoctorS,
-  createInfoDoctorS,
+  getDoctorLimitService,
+  getAllDoctorService,
+  createInfoDoctorService,
+  getDoctorsDetailService,
 };

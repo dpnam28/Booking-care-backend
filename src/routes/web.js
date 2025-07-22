@@ -23,6 +23,7 @@ import {
   getDoctorLimit,
   getAllDoctor,
   createInfoDoctor,
+  getDoctorsDetail,
 } from "../controllers/doctorController";
 
 let router = express.Router();
@@ -46,8 +47,8 @@ let initWebRounters = (app) => {
 
   router.get("/api/get-doctor-limit", getDoctorLimit);
   router.get("/api/get-doctor-all", getAllDoctor);
-
   router.post("/api/create-info-doctor", createInfoDoctor);
+  router.get("/api/get-doctors-detail", getDoctorsDetail);
 
   return app.use("/", router);
 };
