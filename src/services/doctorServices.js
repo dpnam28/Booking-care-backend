@@ -101,9 +101,41 @@ let getDoctorsDetailService = (id) => {
   });
 };
 
+let updateDoctorsDetailService = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let doctor = await db.Markdown.findOne({
+        where: { doctorId: data.id },
+        raw: false,
+      });
+      if (doctor) {
+        await doctor.update({
+          contentMarkdown: data.contentMarkdown,
+          contentHTML: data.contentHTML,
+          description: data.description,
+        });
+        await doctor.save();
+        resolve({
+          errCode: 0,
+          message: "Update successfully",
+        });
+      } else {
+        reject({
+          errCode: 1,
+          message: "error",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getDoctorLimitService,
   getAllDoctorService,
   createInfoDoctorService,
   getDoctorsDetailService,
+  updateDoctorsDetailService,
 };

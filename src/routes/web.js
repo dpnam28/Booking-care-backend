@@ -24,6 +24,7 @@ import {
   getAllDoctor,
   createInfoDoctor,
   getDoctorsDetail,
+  updateDoctorsDetail,
 } from "../controllers/doctorController";
 
 let router = express.Router();
@@ -49,6 +50,7 @@ let initWebRounters = (app) => {
   router.get("/api/get-doctor-all", getAllDoctor);
   router.post("/api/create-info-doctor", createInfoDoctor);
   router.get("/api/get-doctors-detail", getDoctorsDetail);
+  router.put("/api/update-doctors-detail", updateDoctorsDetail);
 
   return app.use("/", router);
 };

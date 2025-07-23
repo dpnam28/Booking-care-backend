@@ -3,6 +3,7 @@ import {
   getAllDoctorService,
   createInfoDoctorService,
   getDoctorsDetailService,
+  updateDoctorsDetailService,
 } from "../services/doctorServices";
 
 let getDoctorLimit = async (req, res) => {
@@ -45,9 +46,20 @@ let getDoctorsDetail = async (req, res) => {
   }
 };
 
+let updateDoctorsDetail = async (req, res) => {
+  try {
+    if (req && req.body) {
+      let response = await updateDoctorsDetailService(req.body);
+      return res.status(200).json(response);
+    }
+  } catch (error) {
+    return res.status(200).json({ errCode: 1, message: "error" });
+  }
+};
 module.exports = {
   getDoctorLimit,
   getAllDoctor,
   createInfoDoctor,
   getDoctorsDetail,
+  updateDoctorsDetail,
 };
