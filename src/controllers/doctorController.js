@@ -4,6 +4,7 @@ import {
   createInfoDoctorService,
   getDoctorsDetailService,
   updateDoctorsDetailService,
+  bulkCreateDoctorScheduleService,
 } from "../services/doctorServices";
 
 let getDoctorLimit = async (req, res) => {
@@ -56,10 +57,23 @@ let updateDoctorsDetail = async (req, res) => {
     return res.status(200).json({ errCode: 1, message: "error" });
   }
 };
+
+let bulkCreateDoctorSchedule = async (req, res) => {
+  try {
+    if (req && req.body) {
+      let response = await bulkCreateDoctorScheduleService(req.body);
+      return res.status(200).json(response);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({ errCode: 1, message: "error" });
+  }
+};
 module.exports = {
   getDoctorLimit,
   getAllDoctor,
   createInfoDoctor,
   getDoctorsDetail,
   updateDoctorsDetail,
+  bulkCreateDoctorSchedule,
 };

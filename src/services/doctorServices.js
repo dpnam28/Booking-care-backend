@@ -1,5 +1,8 @@
 import { where } from "sequelize";
 import db from "../models/index";
+import _ from "lodash";
+require("dotenv").config();
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 let getDoctorLimitService = (limit) => {
   return new Promise(async (resolve, reject) => {
@@ -132,10 +135,53 @@ let updateDoctorsDetailService = async (data) => {
   });
 };
 
+let bulkCreateDoctorScheduleService = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (data.schedule && data.schedule.length > 0) {
+        let schedule = data.schedule.map((item) => {
+          item.maxNumber = MAX_NUMBER_SCHEDULE;
+          return item;
+        });
+
+        //get exist
+        let existing = await db.Schedule.findAll({
+          where: { doctorId: data.doctorId, date: data.date },
+          attributes: ["timeType", "date", "doctorId", "maxNumber"],
+        });
+
+        //convert date
+        if (existing && existing.length > 0) {
+          existing.map((item) => {
+            item.date = new Date(item.date).getTime();
+            return item;
+          });
+        }
+
+        //compare diff
+        let compare = _.differenceWith(schedule, existing, (a, b) => {
+          return a.timeType === b.timeType && a.date === b.date;
+        });
+        if (compare && compare.length > 0) {
+          await db.Schedule.bulkCreate(compare);
+          resolve({ errCode: 0, message: "Success" });
+        } else {
+          resolve({ errCode: 1, message: "These are duplicate times" });
+        }
+      } else {
+        resolve({ errCode: 1, message: "Missing required parameter" });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getDoctorLimitService,
   getAllDoctorService,
   createInfoDoctorService,
   getDoctorsDetailService,
   updateDoctorsDetailService,
+  bulkCreateDoctorScheduleService,
 };

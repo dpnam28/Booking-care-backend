@@ -5,7 +5,7 @@ const { NOW } = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("schedule", {
+    await queryInterface.createTable("schedules", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -41,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("schedule");
+    await queryInterface.dropTable("schedules");
   },
 };
