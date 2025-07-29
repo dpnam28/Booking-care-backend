@@ -1,6 +1,7 @@
 import { where } from "sequelize";
 import db from "../models/index";
 import _, { reject } from "lodash";
+import { raw } from "body-parser";
 require("dotenv").config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -150,17 +151,9 @@ let bulkCreateDoctorScheduleService = (data) => {
           attributes: ["timeType", "date", "doctorId", "maxNumber"],
         });
 
-        //convert date
-        if (existing && existing.length > 0) {
-          existing.map((item) => {
-            item.date = new Date(item.date).getTime();
-            return item;
-          });
-        }
-
         //compare diff
         let compare = _.differenceWith(schedule, existing, (a, b) => {
-          return a.timeType === b.timeType && a.date === b.date;
+          return a.timeType === b.timeType && +a.date === +b.date;
         });
         if (compare && compare.length > 0) {
           await db.Schedule.bulkCreate(compare);
@@ -186,6 +179,15 @@ let getDoctorScheduleService = (doctorId, date) => {
             doctorId: doctorId,
             date: date,
           },
+          include: [
+            {
+              model: db.Allcode,
+              as: "timeTypeData",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: false,
+          nest: true,
         });
 
         resolve({
