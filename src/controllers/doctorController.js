@@ -27,17 +27,19 @@ let getAllDoctor = async (req, res) => {
 };
 let createInfoDoctor = async (req, res) => {
   try {
-    let data = await createInfoDoctorService(req.body);
-    return res.status(200).json({ errCode: 0, message: "Create successfully" });
+    let response = await createInfoDoctorService(req.body);
+    return res.status(200).json(response);
   } catch (error) {
+    console.log(error);
     return res.status(200).json({ errCode: 1, message: "error" });
   }
 };
 
 let getDoctorsDetail = async (req, res) => {
   try {
-    if (!req.query.id)
+    if (!req.query.id) {
       return res.status(200).json({ errCode: 1, message: "Missing query" });
+    }
     let data = await getDoctorsDetailService(req.query.id);
     return res.status(200).json({
       errCode: 0,

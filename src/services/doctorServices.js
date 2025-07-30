@@ -53,7 +53,16 @@ let getAllDoctorService = () => {
 let createInfoDoctorService = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (data && data.html && data.markdown) {
+      if (
+        data &&
+        data.html &&
+        data.markdown &&
+        data.priceId &&
+        data.provinceId &&
+        data.paymentId &&
+        data.addressClinic &&
+        data.nameClinic
+      ) {
         await db.Markdown.create({
           doctorId: data.doctorId,
           contentHTML: data.html,
@@ -62,8 +71,16 @@ let createInfoDoctorService = (data) => {
           specialityId: data.specialityId,
           clinicId: data.clinicId,
         });
+        await db.DoctorInfo.create({
+          doctorId: data.doctorId,
+          priceId: data.priceId,
+          provinceId: data.provinceId,
+          paymentId: data.paymentId,
+          addressClinic: data.addressClinic,
+          nameClinic: data.nameClinic,
+        });
       }
-      resolve(data);
+      resolve({ errCode: 0, message: "Create successfully" });
     } catch (error) {
       reject(error);
     }
@@ -83,6 +100,17 @@ let getDoctorsDetailService = (id) => {
             {
               model: db.Markdown,
               attributes: ["description", "contentHTML", "contentMarkdown"],
+            },
+            {
+              model: db.DoctorInfo,
+              attributes: [
+                "priceId",
+                "paymentId",
+                "provinceId",
+                "addressClinic",
+                "nameClinic",
+                "note",
+              ],
             },
             {
               model: db.Allcode,
