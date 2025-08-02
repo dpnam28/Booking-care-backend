@@ -156,16 +156,31 @@ let updateDoctorsDetailService = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let doctor = await db.Markdown.findOne({
-        where: { doctorId: data.id },
+        where: { doctorId: data.doctorId },
         raw: false,
       });
-      if (doctor) {
+
+      let detail = await db.DoctorInfo.findOne({
+        where: { doctorId: data.doctorId },
+        raw: false,
+      });
+
+      if (doctor && detail) {
         await doctor.update({
-          contentMarkdown: data.contentMarkdown,
-          contentHTML: data.contentHTML,
+          contentMarkdown: data.markdown,
+          contentHTML: data.html,
           description: data.description,
         });
         await doctor.save();
+        await detail.update({
+          priceId: data.priceId,
+          provinceId: data.provinceId,
+          paymentId: data.paymentId,
+          addressClinic: data.addressClinic,
+          nameClinic: data.nameClinic,
+          note: data.note,
+        });
+        await detail.save();
         resolve({
           errCode: 0,
           message: "Update successfully",
@@ -253,6 +268,41 @@ let getDoctorScheduleService = (doctorId, date) => {
   });
 };
 
+let getDoctorsExtraInfoService = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id) {
+        let data = await db.DoctorInfo.findOne({
+          where: { doctorId: id },
+          include: [
+            {
+              model: db.Allcode,
+              as: "priceIdData",
+              attributes: ["valueEn", "valueVi", "keyMap"],
+            },
+            {
+              model: db.Allcode,
+              as: "provinceIdData",
+              attributes: ["valueEn", "valueVi", "keyMap"],
+            },
+            {
+              model: db.Allcode,
+              as: "paymentIdData",
+              attributes: ["valueEn", "valueVi", "keyMap"],
+            },
+          ],
+          raw: false,
+          nest: true,
+        });
+        if (!data) data = {};
+        resolve(JSON.stringify(data));
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getDoctorLimitService,
   getAllDoctorService,
@@ -261,4 +311,5 @@ module.exports = {
   updateDoctorsDetailService,
   bulkCreateDoctorScheduleService,
   getDoctorScheduleService,
+  getDoctorsExtraInfoService,
 };

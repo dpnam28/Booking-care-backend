@@ -6,6 +6,7 @@ import {
   updateDoctorsDetailService,
   bulkCreateDoctorScheduleService,
   getDoctorScheduleService,
+  getDoctorsExtraInfoService,
 } from "../services/doctorServices";
 
 let getDoctorLimit = async (req, res) => {
@@ -57,6 +58,7 @@ let updateDoctorsDetail = async (req, res) => {
       return res.status(200).json(response);
     }
   } catch (error) {
+    console.log(error);
     return res.status(200).json({ errCode: 1, message: "error" });
   }
 };
@@ -91,6 +93,22 @@ let getDoctorSchedule = async (req, res) => {
   }
 };
 
+let getDoctorsExtraInfo = async (req, res) => {
+  try {
+    let data = await getDoctorsExtraInfoService(req.query.doctorId);
+    return res.status(200).json({
+      errCode: 0,
+      data: JSON.parse(data),
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errCode: 1,
+      message: "error",
+    });
+  }
+};
+
 module.exports = {
   getDoctorLimit,
   getAllDoctor,
@@ -99,4 +117,5 @@ module.exports = {
   updateDoctorsDetail,
   bulkCreateDoctorSchedule,
   getDoctorSchedule,
+  getDoctorsExtraInfo,
 };

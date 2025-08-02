@@ -27,6 +27,7 @@ import {
   updateDoctorsDetail,
   bulkCreateDoctorSchedule,
   getDoctorSchedule,
+  getDoctorsExtraInfo,
 } from "../controllers/doctorController";
 
 let router = express.Router();
@@ -55,6 +56,7 @@ let initWebRounters = (app) => {
   router.put("/api/update-doctors-detail", updateDoctorsDetail);
   router.post("/api/bulk-create-doctor-schedule", bulkCreateDoctorSchedule);
   router.get("/api/get-doctor-schedule", getDoctorSchedule);
+  router.get("/api/get-doctors-extra-info", getDoctorsExtraInfo);
 
   return app.use("/", router);
 };
