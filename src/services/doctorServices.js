@@ -303,6 +303,79 @@ let getDoctorsExtraInfoService = (id) => {
   });
 };
 
+let getProfileDoctorService = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id) {
+        let data = await db.User.findOne({
+          where: {
+            id: id,
+            roleId: "R2",
+          },
+          attributes: { exclude: ["password"] },
+          include: [
+            //Markdown
+            {
+              model: db.Markdown,
+              attributes: ["description"],
+            },
+
+            //DoctorInfo
+            {
+              model: db.DoctorInfo,
+              attributes: {
+                exclude: ["doctorId", "id", "updatedAt", "createdAt"],
+              },
+              include: [
+                {
+                  model: db.Allcode,
+                  as: "priceIdData",
+                  attributes: ["valueEn", "valueVi", "keyMap"],
+                },
+                {
+                  model: db.Allcode,
+                  as: "provinceIdData",
+                  attributes: ["valueEn", "valueVi", "keyMap"],
+                },
+                {
+                  model: db.Allcode,
+                  as: "paymentIdData",
+                  attributes: ["valueEn", "valueVi", "keyMap"],
+                },
+              ],
+            },
+
+            //Allcode
+            {
+              model: db.Allcode,
+              as: "positionData",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: true,
+          nest: true,
+        });
+
+        if (data && data.image) {
+          data.image = new Buffer(data.image, "base64").toString("binary");
+        }
+
+        if (!data) {
+          resolve({ errCode: 1, message: "Id doctor is not exist" });
+        }
+        resolve({ errCode: 0, data });
+      } else {
+        resolve({
+          errCode: 1,
+          message: "Missing parameter",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getDoctorLimitService,
   getAllDoctorService,
@@ -312,4 +385,5 @@ module.exports = {
   bulkCreateDoctorScheduleService,
   getDoctorScheduleService,
   getDoctorsExtraInfoService,
+  getProfileDoctorService,
 };
