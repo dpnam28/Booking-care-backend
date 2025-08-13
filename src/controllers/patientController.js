@@ -1,4 +1,7 @@
-import { patientBookAppointmentService } from "../services/patientServices";
+import {
+  patientBookAppointmentService,
+  verifyBookingAppointmentService,
+} from "../services/patientServices";
 
 let patientBookAppointment = async (req, res) => {
   try {
@@ -10,6 +13,16 @@ let patientBookAppointment = async (req, res) => {
   }
 };
 
+let verifyBookingAppointment = async (req, res) => {
+  try {
+    let response = await verifyBookingAppointmentService(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({ errCode: 1, message: "error" });
+  }
+};
 module.exports = {
   patientBookAppointment,
+  verifyBookingAppointment,
 };

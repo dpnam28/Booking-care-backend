@@ -31,7 +31,10 @@ import {
   getProfileDoctor,
 } from "../controllers/doctorController";
 
-import { patientBookAppointment } from "../controllers/patientController";
+import {
+  patientBookAppointment,
+  verifyBookingAppointment,
+} from "../controllers/patientController";
 
 let router = express.Router();
 
@@ -63,6 +66,7 @@ let initWebRounters = (app) => {
   router.get("/api/get-profile-doctor-by-id", getProfileDoctor);
 
   router.post("/api/patient-book-appointment", patientBookAppointment);
+  router.post("/api/verify-booking-appointment", verifyBookingAppointment);
 
   return app.use("/", router);
 };
