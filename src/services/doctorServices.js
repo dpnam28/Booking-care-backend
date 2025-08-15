@@ -1,7 +1,6 @@
 import { where } from "sequelize";
 import db from "../models/index";
 import _, { reject } from "lodash";
-import { raw } from "body-parser";
 require("dotenv").config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -49,27 +48,46 @@ let getAllDoctorService = () => {
     }
   });
 };
+let checkCreateInfoDoctorService = (data) => {
+  let arrCheck = [
+    "addressClinic",
+    "description",
+    "doctorId",
+    "html",
+    "markdown",
+    "nameClinic",
+    "paymentId",
+    "priceId",
+    "provinceId",
+    "specialtyId",
+  ];
+  let isValid = true;
+  let errElement = "";
+  for (let i = 0; i < arrCheck.length; i++) {
+    if (!data[arrCheck[i]]) {
+      isValid = false;
+      errElement = arrCheck[i];
+      break;
+    }
+  }
 
+  return {
+    isValid,
+    errElement,
+  };
+};
 let createInfoDoctorService = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (
-        data &&
-        data.html &&
-        data.markdown &&
-        data.priceId &&
-        data.provinceId &&
-        data.paymentId &&
-        data.addressClinic &&
-        data.nameClinic
-      ) {
+      let checker = checkCreateInfoDoctorService(data);
+      if (checker.isValid) {
         await db.Markdown.create({
           doctorId: data.doctorId,
           contentHTML: data.html,
           contentMarkdown: data.markdown,
           description: data.description,
-          specialityId: data.specialityId,
-          clinicId: data.clinicId,
+          specialtyId: data.specialtyId,
+          clinicId: data.clinicId ? data.clinicId : null,
         });
         await db.DoctorInfo.create({
           doctorId: data.doctorId,
@@ -78,9 +96,17 @@ let createInfoDoctorService = (data) => {
           paymentId: data.paymentId,
           addressClinic: data.addressClinic,
           nameClinic: data.nameClinic,
+          note: data.note,
+          clinicId: data.clinicId ? data.clinicId : null,
+          specialtyId: data.specialtyId,
+        });
+        resolve({ errCode: 0, message: "Create successfully" });
+      } else {
+        resolve({
+          errCode: 1,
+          message: `Missing parameters: ${checker.errElement}`,
         });
       }
-      resolve({ errCode: 0, message: "Create successfully" });
     } catch (error) {
       reject(error);
     }
@@ -176,6 +202,8 @@ let updateDoctorsDetailService = async (data) => {
           priceId: data.priceId,
           provinceId: data.provinceId,
           paymentId: data.paymentId,
+          clinicId: data.clinicId,
+          specialityId: data.specialityId,
           addressClinic: data.addressClinic,
           nameClinic: data.nameClinic,
           note: data.note,

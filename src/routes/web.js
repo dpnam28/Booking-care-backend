@@ -36,6 +36,12 @@ import {
   verifyBookingAppointment,
 } from "../controllers/patientController";
 
+import {
+  createSpecialty,
+  getAllSpecialty,
+  getDetailSpecialty,
+} from "../controllers/specialtyController";
+
 let router = express.Router();
 
 let initWebRounters = (app) => {
@@ -67,6 +73,11 @@ let initWebRounters = (app) => {
 
   router.post("/api/patient-book-appointment", patientBookAppointment);
   router.post("/api/verify-booking-appointment", verifyBookingAppointment);
+
+  router.post("/api/create-specialty", createSpecialty);
+  router.get("/api/get-all-specialty", getAllSpecialty);
+
+  router.get("/api/get-detail-specialty", getDetailSpecialty);
 
   return app.use("/", router);
 };
