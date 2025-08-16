@@ -42,6 +42,7 @@ import {
   getDetailSpecialty,
 } from "../controllers/specialtyController";
 
+import { createClinic, getAllClinic } from "../controllers/clinicController";
 let router = express.Router();
 
 let initWebRounters = (app) => {
@@ -76,8 +77,10 @@ let initWebRounters = (app) => {
 
   router.post("/api/create-specialty", createSpecialty);
   router.get("/api/get-all-specialty", getAllSpecialty);
-
   router.get("/api/get-detail-specialty", getDetailSpecialty);
+
+  router.post("/api/create-clinic", createClinic);
+  router.get("/api/get-all-clinic", getAllClinic);
 
   return app.use("/", router);
 };

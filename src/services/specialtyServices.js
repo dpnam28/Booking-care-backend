@@ -1,4 +1,3 @@
-import { includes } from "lodash";
 import db from "../models/index";
 
 let createSpecialtyService = (data) => {
