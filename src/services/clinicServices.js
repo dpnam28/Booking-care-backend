@@ -40,8 +40,27 @@ let getAllClinicService = () => {
     try {
       let res = await db.Clinics.findAll({
         limit: 10,
+        // attributes: { exclude: ["image"] },
+      });
+      resolve(res);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+let getDetailClinicService = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Clinics.findOne({
+        where: { id },
         attributes: { exclude: ["image"] },
       });
+      let doctorClinic = await db.DoctorInfo.findAll({
+        where: { clinicId: id },
+        attributes: ["doctorId"],
+      });
+      res.doctorClinic = doctorClinic;
       resolve(res);
     } catch (error) {
       reject(error);
@@ -51,4 +70,5 @@ let getAllClinicService = () => {
 module.exports = {
   createClinicService,
   getAllClinicService,
+  getDetailClinicService,
 };
