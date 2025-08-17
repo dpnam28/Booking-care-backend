@@ -8,6 +8,8 @@ import {
   getDoctorScheduleService,
   getDoctorsExtraInfoService,
   getProfileDoctorService,
+  getBookedPatientService,
+  confirmBookedPatientService,
 } from "../services/doctorServices";
 
 let getDoctorLimit = async (req, res) => {
@@ -122,6 +124,30 @@ let getProfileDoctor = async (req, res) => {
   }
 };
 
+let getBookedPatient = async (req, res) => {
+  try {
+    let data = await getBookedPatientService(req.query.id, req.query.date);
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errCode: 1,
+      message: "error",
+    });
+  }
+};
+let confirmBookedPatient = async (req, res) => {
+  try {
+    let data = await confirmBookedPatientService(req.query.id);
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errCode: 1,
+      message: "error",
+    });
+  }
+};
 module.exports = {
   getDoctorLimit,
   getAllDoctor,
@@ -132,4 +158,6 @@ module.exports = {
   getDoctorSchedule,
   getDoctorsExtraInfo,
   getProfileDoctor,
+  getBookedPatient,
+  confirmBookedPatient,
 };

@@ -29,6 +29,8 @@ import {
   getDoctorSchedule,
   getDoctorsExtraInfo,
   getProfileDoctor,
+  getBookedPatient,
+  confirmBookedPatient,
 } from "../controllers/doctorController";
 
 import {
@@ -75,6 +77,8 @@ let initWebRounters = (app) => {
   router.get("/api/get-doctor-schedule", getDoctorSchedule);
   router.get("/api/get-doctors-extra-info", getDoctorsExtraInfo);
   router.get("/api/get-profile-doctor-by-id", getProfileDoctor);
+  router.get("/api/get-booked-patient", getBookedPatient);
+  router.get("/api/confirm-booked-patient", confirmBookedPatient);
 
   router.post("/api/patient-book-appointment", patientBookAppointment);
   router.post("/api/verify-booking-appointment", verifyBookingAppointment);

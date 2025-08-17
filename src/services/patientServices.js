@@ -1,3 +1,4 @@
+import { first } from "lodash";
 import db from "../models/index";
 require("dotenv").config();
 import emailServices from "./emailServices";
@@ -11,8 +12,9 @@ let patientBookAppointmentService = (data) => {
         data.email &&
         data.doctorId &&
         data.timeType &&
-        data.date &&
-        data.fullName
+        data.firstName &&
+        data.lastName &&
+        data.genders
       ) {
         let token = uuidv4();
         let user = await db.User.findOrCreate({
@@ -20,6 +22,11 @@ let patientBookAppointmentService = (data) => {
           defaults: {
             email: data.email,
             roleId: "R3",
+            firstName: data.firstName,
+            lastName: data.lastName,
+            address: data.address,
+            phoneNumber: data.phoneNumber,
+            gender: data.genders,
           },
         });
         if (user && user[0]) {
@@ -36,7 +43,7 @@ let patientBookAppointmentService = (data) => {
           });
           await emailServices.sendSimpleEmail({
             receiverEmail: data.email,
-            patientName: data.fullName,
+            patientName: data.firstName + " " + data.lastName,
             time: data.timeString,
             doctorName: data.doctorName,
             link: buildUrlEmail(data.doctorId, token),

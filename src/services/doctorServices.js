@@ -1,6 +1,7 @@
 import { where } from "sequelize";
 import db from "../models/index";
-import _, { reject } from "lodash";
+import _, { includes, reject } from "lodash";
+import { raw } from "body-parser";
 require("dotenv").config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -409,6 +410,83 @@ let getProfileDoctorService = (id) => {
   });
 };
 
+let getBookedPatientService = (id, date) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id && date) {
+        let response = await db.Booking.findAll({
+          where: { doctorId: id, date: date, statusId: "S2" },
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+          include: [
+            {
+              model: db.User,
+              as: "patientData",
+              attributes: [
+                "firstName",
+                "lastName",
+                "email",
+                "address",
+                "phoneNumber",
+                "gender",
+              ],
+              include: [
+                {
+                  model: db.Allcode,
+                  as: "genderData",
+                  attributes: ["keyMap", "valueVi", "valueEn"],
+                },
+              ],
+            },
+            {
+              model: db.Allcode,
+              as: "timeTypeDataForBooking",
+              attributes: ["keyMap", "valueVi", "valueEn"],
+            },
+          ],
+          raw: false,
+          nest: true,
+        });
+        resolve(response);
+      } else {
+        resolve({
+          errCode: 1,
+          message: "Missing parameters",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let confirmBookedPatientService = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id) {
+        let response = await db.Booking.findOne({
+          where: { id },
+          raw: false,
+        });
+        if (response) {
+          await response.update({
+            statusId: "S3",
+          });
+          await response.save();
+          resolve({
+            errCode: 0,
+            message: "Confirm succeeded",
+          });
+        }
+      } else {
+        resolve({
+          errCode: 1,
+          message: "Missing parameters",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getDoctorLimitService,
   getAllDoctorService,
@@ -419,4 +497,6 @@ module.exports = {
   getDoctorScheduleService,
   getDoctorsExtraInfoService,
   getProfileDoctorService,
+  getBookedPatientService,
+  confirmBookedPatientService,
 };
